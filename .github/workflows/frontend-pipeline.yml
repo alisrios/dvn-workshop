@@ -1,0 +1,56 @@
+name: Frontend Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    paths:
+    - 'dvn-workshop-apps/frontend/**'
+
+permissions:
+  id-token: write
+  
+env:
+    FRONTEND_REPOSITORY: dvn-workshop/production/frontend
+    IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  frontend:
+    name: Frontend Continuous Deployment
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4.2.1
+      with:
+        aws-region: ${{ vars.AWS_REGION }}
+        role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+          docker build -f ./dvn-workshop-apps/frontend/youtube-live-app/Dockerfile -t $REGISTRY/$FRONTEND_REPOSITORY:$IMAGE_TAG ./dvn-workshop-apps/frontend/youtube-live-app
+          docker push $REGISTRY/$FRONTEND_REPOSITORY:$IMAGE_TAG
+
+    - uses: actions/checkout@v4
+      with:
+        repository: kenerry-serain/dvn-workshop-dia-04-gitops
+        token: ${{ secrets.PAT }}
+
+    - name: Kustomize Edit Image
+      env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+          kustomize edit set image $REGISTRY/$FRONTEND_REPOSITORY=$REGISTRY/$FRONTEND_REPOSITORY:$IMAGE_TAG
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ./kustomization.yml
+          git commit -m "[BOT] Changed frontend image to $REGISTRY/$FRONTEND_REPOSITORY:$IMAGE_TAG"
+          git push
