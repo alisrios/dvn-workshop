@@ -1,4 +1,4 @@
-resource "helm_release" "load_balancer" {
+resource "helm_release" "load_balancer_controller" {
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
@@ -17,7 +17,7 @@ resource "helm_release" "load_balancer" {
 
   set {
     name  = "region"
-    value = var.auth.region
+    value = "us-east-1"
   }
 
   set {
@@ -32,6 +32,6 @@ resource "helm_release" "load_balancer" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.load_balancer.arn
+    value = aws_iam_role.load_balancer_controller_role.arn
   }
 }

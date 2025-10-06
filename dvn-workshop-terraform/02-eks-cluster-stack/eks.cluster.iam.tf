@@ -1,5 +1,5 @@
 resource "aws_iam_role" "eks_cluster" {
-  name = "DvnWorkshopEKSClusterRole"
+  name = "DvnWorkshopEksClusterRole"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

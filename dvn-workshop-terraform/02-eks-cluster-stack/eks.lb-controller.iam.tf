@@ -1,32 +1,26 @@
-resource "aws_iam_role" "load_balancer" {
-  name = "AWSLoadBalancerControllerIAMRole"
+resource "aws_iam_role" "load_balancer_controller_role" {
+  name = "DvnWorkshopLoadBalancerControllerRole"
+
   assume_role_policy = jsonencode({
+    Statement = [{
+      Effect = "Allow"
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Principal = {
+        Federated = aws_iam_openid_connect_provider.eks_oidc_provider.arn
+      }
+      Condition = {
+        StringEquals = {
+          "${replace(aws_iam_openid_connect_provider.eks_oidc_provider.url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller",
+          "${replace(aws_iam_openid_connect_provider.eks_oidc_provider.url, "https://", "")}:aud" = "sts.amazonaws.com"
+        }
+      }
+    }]
     Version = "2012-10-17"
-    Statement = [
-      {
-        Action = ["sts:AssumeRoleWithWebIdentity"]
-        Effect = "Allow"
-        Principal = {
-          Federated = aws_iam_openid_connect_provider.kubernetes.arn
-        }
-        Condition = {
-          StringEquals = {
-            "${local.eks_oidc_url}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
-          }
-          StringEquals = {
-            "${local.eks_oidc_url}:aud" = "sts.amazonaws.com"
-          }
-        }
-      },
-    ]
   })
 }
 
-
-resource "aws_iam_policy" "load_balancer" {
-  name        = "AWSLoadBalancerControllerIAMPolicy"
-  path        = "/"
-  description = "Policy for ELBv2 Kubernetes controller integration"
+resource "aws_iam_policy" "load_balancer_controller_policy" {
+  name        = "DvnWorkshopLoadBalancerControllerPolicy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -140,7 +134,7 @@ resource "aws_iam_policy" "load_balancer" {
         Resource = "arn:aws:ec2:*:*:security-group/*"
         Condition = {
           Null = {
-            "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true",
+            "aws:RequestTag/elbv2.k8s.aws/cluster" = "true"
             "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
           }
         }
@@ -195,7 +189,7 @@ resource "aws_iam_policy" "load_balancer" {
         ]
         Condition = {
           Null = {
-            "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true",
+            "aws:RequestTag/elbv2.k8s.aws/cluster" = "true"
             "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
           }
         }
@@ -281,7 +275,7 @@ resource "aws_iam_policy" "load_balancer" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "load_balancer" {
-  policy_arn = aws_iam_policy.load_balancer.arn
-  role       = aws_iam_role.load_balancer.name
+resource "aws_iam_role_policy_attachment" "load_balancer_controller_role_policy" {
+  policy_arn = aws_iam_policy.load_balancer_controller_policy.arn
+  role       = aws_iam_role.load_balancer_controller_role.name
 }
