@@ -36,7 +36,7 @@ variable "eks_cluster" {
 
   default = {
     name    = "dvn-workshop-eks-cluster"
-    version = "1.31"
+    version = "1.33"
     enabled_cluster_log_types = [
       "api",
       "audit",
