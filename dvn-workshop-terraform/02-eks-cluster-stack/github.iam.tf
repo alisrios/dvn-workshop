@@ -11,7 +11,7 @@ resource "aws_iam_role" "github" {
       Condition = {
         StringLike = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub" = "repo:kenerry-serain/dvn-workshop-out-dia-2:*"
+          "token.actions.githubusercontent.com:sub" = "repo:alisrios/dvn-workshop:*"
         }
       }
     }]
