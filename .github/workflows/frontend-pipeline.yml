@@ -43,7 +43,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        repository: kenerry-serain/dvn-workshop-out-dia-2-gitops
+        repository: alisrios/dvn-workshop-gitops
         token: ${{ secrets.PAT }}
 
     - name: Kustomize Edit
