@@ -44,6 +44,7 @@ variable "eks_cluster" {
       "controllerManager",
       "scheduler",
     ]
+    principal_arn                     = "arn:aws:iam::148761658767:user/alisrios"
     access_config_authentication_mode = "API_AND_CONFIG_MAP"
     node_group_name                   = "dvn-workshop-eks-node-group"
     node_group_instance_types         = ["t3.medium"]
@@ -72,4 +73,13 @@ variable "ecr_repositories" {
       image_tag_mutability = "MUTABLE"
     }
   ]
+}
+
+variable "eks_access_entrys" {
+  type = map(string)
+  default = {
+    principal_arn = "arn:aws:iam::148761658767:user/alisrios"
+    type          = "STANDARD"
+  }
+
 }

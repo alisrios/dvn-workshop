@@ -20,7 +20,7 @@ resource "aws_iam_role" "load_balancer_controller_role" {
 }
 
 resource "aws_iam_policy" "load_balancer_controller_policy" {
-  name        = "DvnWorkshopLoadBalancerControllerPolicy"
+  name = "DvnWorkshopLoadBalancerControllerPolicy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -134,7 +134,7 @@ resource "aws_iam_policy" "load_balancer_controller_policy" {
         Resource = "arn:aws:ec2:*:*:security-group/*"
         Condition = {
           Null = {
-            "aws:RequestTag/elbv2.k8s.aws/cluster" = "true"
+            "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true"
             "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
           }
         }
@@ -189,7 +189,7 @@ resource "aws_iam_policy" "load_balancer_controller_policy" {
         ]
         Condition = {
           Null = {
-            "aws:RequestTag/elbv2.k8s.aws/cluster" = "true"
+            "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true"
             "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
           }
         }
