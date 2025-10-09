@@ -4,9 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - main
-    paths:
-    - 'dvn-workshop-apps/frontend/**'
+    - main 
 
 env:
     REPOSITORY: dvn-workshop/production/frontend
