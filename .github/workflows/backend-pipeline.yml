@@ -5,7 +5,9 @@ on:
   push:
     branches:
     - main
-
+    paths:
+    - 'apps/backend/**'
+    
 env:
     REPOSITORY: dvn-workshop/production/backend
     IMAGE_TAG: ${{ github.sha }}
