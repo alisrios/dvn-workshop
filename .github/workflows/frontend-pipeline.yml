@@ -6,7 +6,7 @@ on:
     branches:
     - main
     paths:
-    - 'apps/frontend/**'
+    - 'dvn-workshop-apps/frontend/**'
 
 env:
     REPOSITORY: dvn-workshop/production/frontend
